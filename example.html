@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Game Engine Example</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Scene, camera, renderer 생성
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 카메라 위치 설정
+		camera.position.set(-10, 10, 10); // x 축 양의 방향으로 이동하여 옆면을 보도록 설정
+		camera.lookAt(0, 0, 0); // 원점을 바라보도록 설정
+
+        // 사각형들 생성
+        const squares = [];
+        const squareColors = [0xff0000, 0x00ff00, 0x0000ff]; // 빨강, 초록, 파랑
+        const squarePositions = [
+            { x: 0, y: 0, z: 0 },
+            { x: -5, y: 0, z: 0 },
+            { x: 5, y: 0, z: 0 }
+        ];
+
+		squarePositions.forEach((pos, index) => {
+			const geometry = new THREE.BoxGeometry(3, 3, 3);
+			const material = new THREE.MeshBasicMaterial({ color: squareColors[index] });
+			const square = new THREE.Mesh(geometry, material);
+
+			square.position.set(pos.x, pos.y, pos.z);
+			squares.push(square);
+			scene.add(square);
+		});
+
+        // 카메라 이동 함수
+        function moveCamera(key) {
+            const speed = 1.0;
+            switch(key) {
+                case 'W':
+                    camera.position.z -= speed;
+                    break;
+                case 'S':
+                    camera.position.z += speed;
+                    break;
+                case 'A':
+                    camera.position.x -= speed;
+                    break;
+                case 'D':
+                    camera.position.x += speed;
+                    break;
+            }
+			
+			// 원점을 바라보도록 설정
+			camera.lookAt(0, 0, 0);
+        }
+
+        // 렌더링
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // 키보드 이벤트 리스너 추가
+        document.addEventListener('keydown', (event) => {
+            moveCamera(event.key.toUpperCase());
+			
+			if (event.key == 'q') {
+				//camera.position.set(0, 0, 10); // 카메라 위치를 변경하여 아래를 보도록 함
+				//camera.lookAt(0, -10, 0); // 카메라가 아래를 바라보도록 설정
+			}
+
+        });
+    </script>
+</body>
+</html>
